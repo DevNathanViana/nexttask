@@ -1,3 +1,8 @@
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
+import { ButtonSignOut } from "./_components/ButtonSignOut";
+
 export const metadata = {
     title: "Tasks - NextTask",
     description: "Gerencie suas atividades",
@@ -7,7 +12,16 @@ export const metadata = {
     },
 };
 
-export default function Tasks() {
+export default async function Tasks() {
+
+    const session = await auth.api.getSession({
+        headers: await headers()
+    })
+
+    if (!session) {
+        redirect("/login")
+    }
+
     return (
         <div className="w-screen h-screen flex flex-col bg-white-200">
             <nav className="w-full h-16 bg-gray-100 border-b border-gray-300 flex items-center justify-between px-6">
@@ -17,9 +31,7 @@ export default function Tasks() {
                     <button className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 cursor-pointer hover:scale-95 transition-all duration-700">
                         Nova Task
                     </button>
-                    <button className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 cursor-pointer hover:scale-95 transition-all duration-700">
-                        Logout
-                    </button>
+                    <ButtonSignOut />
                 </div>
             </nav>
 
