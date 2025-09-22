@@ -66,14 +66,26 @@ export default function CadastroForm() {
         }
     };
 
+    const loginWithGoogle = async () => {
+        await authClient.signIn.social({
+            provider: "google", callbackURL: '/tasks'
+        })
+    }
+
+    const loginWithGitHub = async () => {
+        await authClient.signIn.social({
+            provider: "github", callbackURL: '/tasks'
+        })
+    }
+
 
     return (
         <div className="w-1/2 h-1/2 flex flex-col gap-7 justify-center items-center">
             <h1 className="text-black-300 text-5xl pb-3">Welcome</h1>
 
             <div className="flex flex-col w-full gap-4">
-                <SocialButton icon={<FaGoogle size={20} />}>Sign in with Google</SocialButton>
-                <SocialButton icon={<FaGithub size={20} />}>Sign in with Github</SocialButton>
+                <SocialButton onClick={loginWithGoogle} icon={<FaGoogle size={20} />}>Sign in with Google</SocialButton>
+                <SocialButton onClick={loginWithGitHub} icon={<FaGithub size={20} />}>Sign in with Github</SocialButton>
             </div>
 
             <div className="flex items-center w-full py-5">
