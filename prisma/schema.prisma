@@ -24,9 +24,24 @@ model User {
   updatedAt     DateTime  @default(now()) @updatedAt
   sessions      Session[]
   accounts      Account[]
+  tasks         Task[]
 
   @@unique([email])
   @@map("user")
+}
+
+model Task {
+  id          String   @id @default(uuid())
+  title       String
+  description String
+  status      String?  @default("Pendente")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("task")
 }
 
 model Session {
