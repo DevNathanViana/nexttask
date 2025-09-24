@@ -1,6 +1,6 @@
 'use client'
 
-import InputField from "@/components/InputField";
+import { InputField } from "@/components/InputField";
 import SocialButton from "@/components/SocialButton";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
