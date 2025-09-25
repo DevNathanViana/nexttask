@@ -9,7 +9,6 @@ import { FaGithub, FaGoogle } from "react-icons/fa";
 import { z, ZodError } from "zod";
 import { authClient } from "@/lib/auth-client";
 import { toast } from "react-hot-toast";
-import { google } from "better-auth/social-providers";
 
 export default function LoginForm() {
     const [email, setEmail] = useState("");
