@@ -113,11 +113,8 @@ export default function LoginForm() {
                 </div>
 
                 <div className="pt-2 w-full flex justify-center items-center flex-col gap-2">
-                    <p className="text-[#5a5a5a] cursor-pointer hover:scale-95 transition-all duration-700">
-                        <Link href={"/cadastro"}>New here? Create an account!</Link>
-                    </p>
                     <p className="text-[rgba(26,145,86,1)] cursor-pointer hover:scale-95 transition-all duration-700">
-                        Forgot password?
+                        <Link href={"/cadastro"}>New here? Create an account!</Link>
                     </p>
                 </div>
             </div>

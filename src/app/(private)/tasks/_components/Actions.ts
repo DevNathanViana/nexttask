@@ -15,13 +15,42 @@ export async function saveTask(title: string, description: string) {
         data: {
             title,
             description,
-            status: "Pendente",
+            status: "pending",
             user: {
                 connect: { id: session.user.id }
             }
         }
     })
 }
+
+export async function updateTaskStatus(
+    id: string,
+    status: "pending" | "inProgress" | "done"
+) {
+    const session = await auth.api.getSession({
+        headers: await headers(),
+    });
+    if (!session?.user) throw new Error("Usuário não autenticado");
+
+    return prisma.task.update({
+        where: { id },
+        data: { status },
+    });
+}
+
+export async function deleteTask(
+    id: string,
+) {
+    const session = await auth.api.getSession({
+        headers: await headers(),
+    });
+    if (!session?.user) throw new Error("Usuário não autenticado");
+
+    return prisma.task.delete({
+        where: { id },
+    });
+}
+
 
 export async function getUserTasks() {
     const session = await auth.api.getSession({

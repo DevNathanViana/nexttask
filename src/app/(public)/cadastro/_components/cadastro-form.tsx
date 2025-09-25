@@ -107,8 +107,7 @@ export default function CadastroForm() {
                 </div>
 
                 <div className="pt-2 w-full flex flex-col justify-center items-center gap-2">
-                    <p className="text-[#5a5a5a] cursor-pointer hover:scale-95 transition-all duration-700"><Link href={"/login"}>Already have an account? Sign in!</Link></p>
-                    <p className="text-[rgba(26,145,86,1)] cursor-pointer hover:scale-95 transition-all duration-700">Forgot password?</p>
+                    <p className="text-[rgba(26,145,86,1)] cursor-pointer hover:scale-95 transition-all duration-700"><Link href={"/login"}>Already have an account? Sign in!</Link></p>
                 </div>
             </div>
 

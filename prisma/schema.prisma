@@ -34,7 +34,7 @@ model Task {
   id          String   @id @default(uuid())
   title       String
   description String
-  status      String?  @default("Pendente")
+  status      String   @default("pending")
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
