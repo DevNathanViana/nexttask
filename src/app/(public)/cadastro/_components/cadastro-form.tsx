@@ -9,8 +9,10 @@ import { FaGithub, FaGoogle } from "react-icons/fa";
 import { z, ZodError } from "zod";
 import { authClient } from "@/lib/auth-client";
 import { toast } from "react-hot-toast";
+import Loading from "@/app/_components/loading";
 
 export default function CadastroForm() {
+    const [loading, setLoading] = useState(false);
     const [nome, setNome] = useState("");
     const [email, setEmail] = useState("");
     const [senha, setSenha] = useState("");
@@ -34,15 +36,21 @@ export default function CadastroForm() {
             email: email,
             password: senha
         }, {
+            onRequest: () => {
+                setLoading(true)
+            },
+
             onSuccess: (ctx) => {
                 console.log(ctx)
                 toast.success('Conta criada com sucesso!')
+                setLoading(false)
                 router.replace("/tasks")
             },
 
             onError: (ctx) => {
                 console.log(ctx)
                 toast.error('Erro ao criar conta.')
+                setLoading(false)
                 console.log('error encontrado')
             }
         })
@@ -67,49 +75,85 @@ export default function CadastroForm() {
     };
 
     const loginWithGoogle = async () => {
-        await authClient.signIn.social({
-            provider: "google", callbackURL: '/tasks'
-        })
-    }
+        await authClient.signIn.social(
+            {
+                provider: "google", callbackURL: '/tasks'
+            },
+            {
+                onRequest: () => {
+                    setLoading(true);
+                },
+                onSuccess: (ctx) => {
+                    console.log("Google login sucesso:", ctx);
+                    setLoading(false);
+                },
+                onError: (err) => {
+                    console.error("Erro no login Google:", err);
+                    toast.error("Erro ao logar com Google.");
+                    setLoading(false);
+                },
+            }
+        );
+    };
+
 
     const loginWithGitHub = async () => {
         await authClient.signIn.social({
             provider: "github", callbackURL: '/tasks'
-        })
+        },
+            {
+                onRequest: () => {
+                    setLoading(true);
+                },
+                onSuccess: (ctx) => {
+                    console.log("GitHub login sucesso:", ctx);
+                    setLoading(false);
+                },
+                onError: (err) => {
+                    console.error("Erro no login GitHub:", err);
+                    toast.error("Erro ao logar com GitHub.");
+                    setLoading(false);
+                },
+            }
+        )
     }
 
 
     return (
         <div className="w-1/2 h-1/2 flex flex-col gap-7 justify-center items-center">
-            <h1 className="text-black-300 text-5xl pb-3">Welcome</h1>
+            <h1 className="text-black-300 text-5xl pb-3">Bem Vindo</h1>
 
             <div className="flex flex-col w-full gap-4">
-                <SocialButton onClick={loginWithGoogle} icon={<FaGoogle size={20} />}>Sign in with Google</SocialButton>
-                <SocialButton onClick={loginWithGitHub} icon={<FaGithub size={20} />}>Sign in with Github</SocialButton>
+                <SocialButton disabled={loading} onClick={loginWithGoogle} icon={<FaGoogle size={20} />}>Entre com o Google</SocialButton>
+                <SocialButton disabled={loading} onClick={loginWithGitHub} icon={<FaGithub size={20} />}>Entre com o Github</SocialButton>
             </div>
 
             <div className="flex items-center w-full py-5">
                 <div className="flex-grow border-t border-gray-300"></div>
-                <span className="px-3 text-gray-500">or</span>
+                <span className="px-3 text-gray-500">ou</span>
                 <div className="flex-grow border-t border-gray-300"></div>
             </div>
 
             <div className="flex flex-col w-full gap-6">
-                <InputField id="name" label="Name" placeholder="John Example" value={nome} onChange={(e) => setNome(e.target.value)} fieldError={errors.nome} />
+                <InputField id="name" label="Nome" placeholder="John Example" value={nome} onChange={(e) => setNome(e.target.value)} fieldError={errors.nome} />
                 <InputField id="email" label="Email" placeholder="example@gmail.com" value={email} onChange={(e) => setEmail(e.target.value)} fieldError={errors.email} />
-                <InputField id="senha" label="Password" type="password" value={senha} onChange={(e) => setSenha(e.target.value)} fieldError={errors.senha} />
-                <InputField id="confirmaSenha" label="Confirm Password" type="password" value={confirmaSenha} onChange={(e) => setConfirmaSenha(e.target.value)} fieldError={errors.confirmaSenha} />
+                <InputField id="senha" label="Senha" type="password" value={senha} onChange={(e) => setSenha(e.target.value)} fieldError={errors.senha} />
+                <InputField id="confirmaSenha" label="Confirmar Senha" type="password" value={confirmaSenha} onChange={(e) => setConfirmaSenha(e.target.value)} fieldError={errors.confirmaSenha} />
 
                 <div className="pt-4">
                     <button onClick={handleLogin} className="w-full h-12 bg-[linear-gradient(0deg,rgba(26,145,86,1)_0%,rgba(0,191,73,1)_100%)] active:scale-95 rounded cursor-pointer text-white font-semibold transition-all duration-300 ">
-                        Login
+                        Entrar
                     </button>
                 </div>
 
                 <div className="pt-2 w-full flex flex-col justify-center items-center gap-2">
-                    <p className="text-[rgba(26,145,86,1)] cursor-pointer hover:scale-95 transition-all duration-700"><Link href={"/login"}>Already have an account? Sign in!</Link></p>
+                    <p className="text-[rgba(26,145,86,1)] cursor-pointer hover:scale-95 transition-all duration-700"><Link href={"/login"}>Já tem uma conta? Entre!</Link></p>
                 </div>
             </div>
+
+            {loading && (
+                <Loading />
+            )}
 
         </div>
     );

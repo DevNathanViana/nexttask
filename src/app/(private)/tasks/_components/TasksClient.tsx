@@ -9,6 +9,7 @@ import { InputField, InputTextAreaField } from "@/components/InputField";
 import { deleteTask, getUserTasksByStatus, saveTask, updateTaskStatus } from "./Actions";
 import Card from "./Card";
 import z, { ZodError } from "zod";
+import Loading from "@/app/_components/loading";
 
 
 export default function TasksClient() {
@@ -22,15 +23,22 @@ export default function TasksClient() {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const [tasksDone, setTasksDone] = useState<any[]>([]);
     const [errors, setErrors] = useState<{ title?: string, description?: string }>({});
+    const [loading, setLoading] = useState(false);
 
     const loadTasks = async () => {
-        const dataTasksPending = await getUserTasksByStatus('pending')
-        const dataTasksInProgress = await getUserTasksByStatus('inProgress')
-        const dataTasksDone = await getUserTasksByStatus('done')
-        setTasksPending(dataTasksPending)
-        setTasksInProgress(dataTasksInProgress)
-        setTasksDone(dataTasksDone)
-    }
+        try {
+            setLoading(true);
+            const dataTasksPending = await getUserTasksByStatus("pending");
+            const dataTasksInProgress = await getUserTasksByStatus("inProgress");
+            const dataTasksDone = await getUserTasksByStatus("done");
+            setTasksPending(dataTasksPending);
+            setTasksInProgress(dataTasksInProgress);
+            setTasksDone(dataTasksDone);
+        } finally {
+            setLoading(false);
+        }
+    };
+
 
     const Task = z.object({
         title: z.string().min(1, { message: 'O título deve conter pelo menos 1 caracteres.' }),
@@ -41,13 +49,14 @@ export default function TasksClient() {
         loadTasks()
     }, [])
 
-    const handleLogin = () => {
+    const handleSaveTask = async () => {
         try {
             Task.parse({ title, description });
             setErrors({});
-            saveTask(title, description);
-            setModal(false)
-            loadTasks()
+            setLoading(true);
+            await saveTask(title, description);
+            setModal(false);
+            await loadTasks();
         } catch (err) {
             if (err instanceof ZodError) {
                 const fieldErrors = err.flatten().fieldErrors as Record<"title" | "description", string[] | undefined>;
@@ -56,6 +65,8 @@ export default function TasksClient() {
                     description: fieldErrors.description?.[0],
                 });
             }
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -66,12 +77,17 @@ export default function TasksClient() {
 
     return (
         <div className="w-screen h-screen flex flex-col bg-white-200">
+
+            {loading && (
+                <Loading />
+            )}
+
             <nav className="w-full min-h-16 bg-gray-100 border-b border-gray-300 flex items-center justify-between px-6">
                 <div className="text-xl font-bold text-gray-800">NextTask</div>
 
                 <div className="flex gap-3">
                     <ButtonNewTask setModal={setModal} />
-                    <ButtonSignOut />
+                    <ButtonSignOut setLoading={setLoading} />
                 </div>
             </nav>
 
@@ -82,22 +98,24 @@ export default function TasksClient() {
                         <p className="text-blue-400 text-start">Tasks para fazer</p>
                     </div>
                     <div className="w-full h-full border border-gray-200 rounded p-2 flex flex-col justify-start items-center gap-2 overflow-y-scroll">
-                        {tasksPending.map((task) => {
-                            return (
-                                <Card
-                                    onDelete={async (id) => {
-                                        await deleteTask(id)
-                                        await loadTasks()
-                                    }}
-                                    task={task}
-                                    key={task.id}
-                                    onUpdateStatus={async (id, newStatus) => {
-                                        await updateTaskStatus(id, newStatus as "pending" | "inProgress" | "done")
-                                        await loadTasks()
-                                    }}
-                                />
-                            )
-                        })}
+                        {tasksPending.map((task) => (
+                            <Card
+                                onDelete={async (id) => {
+                                    setLoading(true);
+                                    await deleteTask(id);
+                                    await loadTasks();
+                                    setLoading(false);
+                                }}
+                                task={task}
+                                key={task.id}
+                                onUpdateStatus={async (id, newStatus) => {
+                                    setLoading(true);
+                                    await updateTaskStatus(id, newStatus as "pending" | "inProgress" | "done");
+                                    await loadTasks();
+                                    setLoading(false);
+                                }}
+                            />
+                        ))}
                     </div>
                 </div>
 
@@ -106,22 +124,24 @@ export default function TasksClient() {
                         <p className="text-orange-400 text-start">Tasks em andamento</p>
                     </div>
                     <div className="w-full h-full border border-gray-200 rounded p-2 flex flex-col justify-start items-center gap-2 overflow-y-scroll">
-                        {tasksInProgress.map((task) => {
-                            return (
-                                <Card
-                                    onDelete={async (id) => {
-                                        await deleteTask(id)
-                                        await loadTasks()
-                                    }}
-                                    task={task}
-                                    key={task.id}
-                                    onUpdateStatus={async (id, newStatus) => {
-                                        await updateTaskStatus(id, newStatus as "pending" | "inProgress" | "done")
-                                        await loadTasks()
-                                    }}
-                                />
-                            )
-                        })}
+                        {tasksInProgress.map((task) => (
+                            <Card
+                                onDelete={async (id) => {
+                                    setLoading(true);
+                                    await deleteTask(id);
+                                    await loadTasks();
+                                    setLoading(false);
+                                }}
+                                task={task}
+                                key={task.id}
+                                onUpdateStatus={async (id, newStatus) => {
+                                    setLoading(true);
+                                    await updateTaskStatus(id, newStatus as "pending" | "inProgress" | "done");
+                                    await loadTasks();
+                                    setLoading(false);
+                                }}
+                            />
+                        ))}
                     </div>
                 </div>
 
@@ -130,22 +150,24 @@ export default function TasksClient() {
                         <p className="text-green-400 text-start">Tasks concluídas</p>
                     </div>
                     <div className="w-full h-full border border-gray-200 rounded p-2 flex flex-col justify-start items-center gap-2 overflow-y-scroll">
-                        {tasksDone.map((task) => {
-                            return (
-                                <Card
-                                    onDelete={async (id) => {
-                                        await deleteTask(id)
-                                        await loadTasks()
-                                    }}
-                                    task={task}
-                                    key={task.id}
-                                    onUpdateStatus={async (id, newStatus) => {
-                                        await updateTaskStatus(id, newStatus as "pending" | "inProgress" | "done")
-                                        await loadTasks()
-                                    }}
-                                />
-                            )
-                        })}
+                        {tasksDone.map((task) => (
+                            <Card
+                                onDelete={async (id) => {
+                                    setLoading(true);
+                                    await deleteTask(id);
+                                    await loadTasks();
+                                    setLoading(false);
+                                }}
+                                task={task}
+                                key={task.id}
+                                onUpdateStatus={async (id, newStatus) => {
+                                    setLoading(true);
+                                    await updateTaskStatus(id, newStatus as "pending" | "inProgress" | "done");
+                                    await loadTasks();
+                                    setLoading(false);
+                                }}
+                            />
+                        ))}
                     </div>
                 </div>
 
@@ -160,7 +182,7 @@ export default function TasksClient() {
                 <div className="w-full h-full flex gap-3 justify-end pt-2">
                     <button
                         onClick={async () => {
-                            handleLogin()
+                            handleSaveTask()
                         }}
                         className="px-4 py-2 bg-green-700 text-white rounded hover:bg-green-800 cursor-pointer hover:scale-95 transition-all duration-700"
                     >

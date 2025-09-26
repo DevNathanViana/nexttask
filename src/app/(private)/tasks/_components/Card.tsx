@@ -22,7 +22,7 @@ export default function Card({ task, onUpdateStatus, onDelete }: CardProps) {
                 <h3 className="text-lg font-bold text-gray-900 mb-2 truncate">{task.title}</h3>
                 <button
                     onClick={() => setConfirmOpen(true)}
-                    className="px-4 py-1 text-xs bg-red-500 text-white rounded hover:bg-red-600 cursor-pointer hover:scale-95 transition-all duration-700"
+                    className="px-4 py-1 text-xs bg-red-400 text-white rounded hover:bg-red-600 cursor-pointer hover:scale-95 transition-all duration-700"
                 >
                     deletar
                 </button>
@@ -32,7 +32,7 @@ export default function Card({ task, onUpdateStatus, onDelete }: CardProps) {
 
             <div className="flex justify-between items-center mt-3">
                 <span className={`inline-block px-2 py-1 text-xs font-semibold rounded ${statusColor}`}>
-                    {task.status}
+                    {task.status === 'pending' ? 'Pendente' : task.status === 'inProgress' ? 'Em Progresso' : 'Finalizada'}
                 </span>
 
                 <div className="flex flex-col md:flex-row gap-2">
@@ -40,13 +40,13 @@ export default function Card({ task, onUpdateStatus, onDelete }: CardProps) {
                         <>
                             <button
                                 onClick={() => onUpdateStatus(task.id, "inProgress")}
-                                className="px-2 py-1 text-xs bg-orange-500 text-white rounded hover:bg-orange-600 cursor-pointer hover:scale-95 transition-all duration-700"
+                                className="px-2 py-1 text-xs bg-orange-300 text-white rounded hover:bg-orange-600 cursor-pointer hover:scale-95 transition-all duration-700"
                             >
                                 Em progresso
                             </button>
                             <button
                                 onClick={() => onUpdateStatus(task.id, "done")}
-                                className="px-2 py-1 text-xs bg-green-600 text-white rounded hover:bg-green-700 cursor-pointer hover:scale-95 transition-all duration-700"
+                                className="px-2 py-1 text-xs bg-green-300 text-white rounded hover:bg-green-700 cursor-pointer hover:scale-95 transition-all duration-700"
                             >
                                 Finalizar
                             </button>
@@ -56,13 +56,13 @@ export default function Card({ task, onUpdateStatus, onDelete }: CardProps) {
                         <>
                             <button
                                 onClick={() => onUpdateStatus(task.id, "pending")}
-                                className="px-2 py-1 text-xs bg-blue-500 text-white rounded hover:bg-blue-600 cursor-pointer hover:scale-95 transition-all duration-700"
+                                className="px-2 py-1 text-xs bg-blue-300 text-white rounded hover:bg-blue-600 cursor-pointer hover:scale-95 transition-all duration-700"
                             >
                                 Pendente
                             </button>
                             <button
                                 onClick={() => onUpdateStatus(task.id, "done")}
-                                className="px-2 py-1 text-xs bg-green-600 text-white rounded hover:bg-green-700 cursor-pointer hover:scale-95 transition-all duration-700"
+                                className="px-2 py-1 text-xs bg-green-300 text-white rounded hover:bg-green-700 cursor-pointer hover:scale-95 transition-all duration-700"
                             >
                                 Finalizar
                             </button>
@@ -72,13 +72,13 @@ export default function Card({ task, onUpdateStatus, onDelete }: CardProps) {
                         <>
                             <button
                                 onClick={() => onUpdateStatus(task.id, "pending")}
-                                className="px-2 py-1 text-xs bg-blue-500 text-white rounded hover:bg-blue-600 cursor-pointer hover:scale-95 transition-all duration-700"
+                                className="px-2 py-1 text-xs bg-blue-300 text-white rounded hover:bg-blue-600 cursor-pointer hover:scale-95 transition-all duration-700"
                             >
                                 Pendente
                             </button>
                             <button
                                 onClick={() => onUpdateStatus(task.id, "inProgress")}
-                                className="px-2 py-1 text-xs bg-orange-500 text-white rounded hover:bg-orange-600 cursor-pointer hover:scale-95 transition-all duration-700"
+                                className="px-2 py-1 text-xs bg-orange-300 text-white rounded hover:bg-orange-600 cursor-pointer hover:scale-95 transition-all duration-700"
                             >
                                 Em progresso
                             </button>
